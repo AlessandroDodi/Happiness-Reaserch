@@ -15,16 +15,35 @@ library(car)
 library(readxl)
 library(lemon)
 ```
+- [What is happiness](#what-is-happiness)
+- [The aim of this project](#the-aim-of-this-project)
+- [About Dataset](#about-dataset)
+  * [Context](#context)
+  * [Content](#content)
+  * [Inspiration](#inspiration)
+- [Intresting correlations](#intresting-correlations)
+  * [Overall](#overall)
+  * [GDP and happiness score](#gdp-and-happiness-score)
+  * [Generosity and GDP](#generosity-and-gdp)
+  * [Perception of corruption and score](#perception-of-corruption-and-score)
+  * [Freedom to make life choices and score](#freedom-to-make-life-choices-and-score)
+- [Grouping by Region](#grouping-by-region)
+  * [Happiness Score by Region](#happiness-score-by-region)
+  * [GDP by Region](#gdp-by-region)
+  * [Visualization of generosity and happiness score by region](#visualization-of-generosity-and-happiness-score-by-region)
+- [Distribution of density](#distribution-of-density)
+- [Improvements across time](#improvements-across-time)
+- [Assuming some correlations](#assuming-some-correlations)
+- [Conclusions](#conclusions)
+  * [When will we all reach 10](#when-will-we-all-reach-10)
+  * [How to reach that](#how-to-reach-that)
+
+
+
 
 <br /> <img src="img.jpeg" width="80%"/> <br /><br />
 
-<h2>
-
-What is happiness
-
-</h2>
-
-<p>
+## What is happiness
 
 Happiness is an emotional state characterized by feelings of joy,
 satisfaction, contentment, and fulfillment. While happiness has many
@@ -39,36 +58,21 @@ emotional state. Just as it sounds, subjective well-being tends to focus
 on an individual's overall personal feelings about their life in the
 present.
 
-</p>
 
-<h2>
-
-The aim of this project
-
-</h2>
-
-<p>
+## The aim of this project
 
 The aim of this project is to observe the data from the World Happiness
 Report for several years and to exploratory data analysis to search for
 the difference in happiness levels between countries and try to
 postulate some hypothesis
 
-</p>
 
-<h2>
+## About Dataset
 
-About Dataset
-
-</h2>
 <br /> <img src="map.PNG" width="80%"/> <br /><br />
-<h3>
 
-Context
 
-</h3>
-
-<p>
+### Context
 
 The World Happiness Report is a landmark survey of the state of global
 happiness. The first report was published in 2012, the second in 2013,
@@ -85,15 +89,7 @@ progress of nations. The reports review the state of happiness in the
 world today and show how the new science of happiness explains personal
 and national variations in happiness.
 
-</p>
-
-<h3>
-
-Content
-
-</h3>
-
-<p>
+### Content
 
 The happiness scores and rankings use data from the Gallup World Poll.
 The scores are based on answers to the main life evaluation question
@@ -112,15 +108,7 @@ of the six factors. They have no impact on the total score reported for
 each country, but they do explain why some countries rank higher than
 others.
 
-</p>
-
-<h3>
-
-Inspiration
-
-</h3>
-
-<p>
+### Inspiration
 
 What countries or regions rank the highest in overall happiness and each
 of the six factors contributing to happiness? How did country ranks or
@@ -157,8 +145,7 @@ on the scale from 0 to 10, they are always much smaller than the
 calculated value in Dystopia, where the average life is rated at 1.85 on
 the 0 to 10 scale.
 
-**What do the columns succeeding the Happiness Score(like Family,
-Generosity, etc.) describe?**
+**What do the columns succeeding the Happiness Score(like Family,Generosity, etc.) describe?**
 
 The following columns: GDP per Capita, Family, Life Expectancy, Freedom,
 Generosity, Trust Government Corruption describe the extent to which
@@ -169,8 +156,6 @@ country as stated in the previous answer.
 
 If you add all these factors up, you get the happiness score so it might
 be un-reliable to model them to predict Happiness Scores.
-
-</p>
 
 ```{r}
 
@@ -189,8 +174,8 @@ head(d2018)
 head(d2019)
 ```
 
-<br/><br/> <b>First 5 countries</b><br/><br/> First let's see the top 5
-for the years 2015, 2016. 2017, 2018, and 2019.
+**First 5 countries**
+First let's see the top 5 for the years 2015, 2016. 2017, 2018, and 2019.
 
 ```{r}
 d2015[,c("Country", "Happiness.Rank", "Happiness.Score")] |> head(5)
@@ -214,21 +199,8 @@ d2019[,c("Country.or.region", "Overall.rank", "Score")] |> tail(5)
 library('ggplot2')
 ```
 
-<br/><br/>
-
-<h3>
-
-Intresting correlations
-
-</h3>
-
-<br/>
-
-<h4>
-
-Overall
-
-</h4>
+## Intresting correlations
+### Overall
 
 Let's see overall some correlations between some columns of the dataset
 and the score.
@@ -240,13 +212,7 @@ avPlots(fit, ask=FALSE)
 
 Now let's go into the specifics of some intresing correlation
 
-<h4>
-
-GDP and happiness score
-
-</h4>
-
-<p>
+### GDP and happiness score
 
 It's intresting to see some correlations between the data in order to
 understand how there could be massive differences between the first and
@@ -254,8 +220,6 @@ the last five countries . For example, the following is the correlation
 between the life expectancy and the happiness score, displaying also the
 life expectancy. We can see that the correlation is quite stable across
 time.
-
-</p>
 
 ```{r}
 ggplot(d2015) + geom_point(aes(x=Happiness.Score, y=Economy..GDP.per.Capita. , col=Health..Life.Expectancy.))
@@ -265,15 +229,10 @@ ggplot(d2018) + geom_point(aes(x=Score, y=GDP.per.capita , col=Healthy.life.expe
 ggplot(d2019) + geom_point(aes(x=Score, y=GDP.per.capita , col=Healthy.life.expectancy))
 ```
 
-<br/>
+### Generosity and GDP
 
-<h4>
 
-Generosity and GDP
-
-</h4>
-
-It's intrenting to see if when people are richer they care less about
+It's intresting to see if when people are richer they care less about
 the generosity of others. In order to answer this question it's
 sufficient to display the correlation between Generosity and GDP.
 
@@ -286,11 +245,8 @@ g + geom_point() +
 It seems that people are more sensitive to generosity when they have
 less resources, which makes sense.
 
-<h4>
+### Perception of corruption and score
 
-Perception of corruption and score
-
-</h4>
 
 Now let's see how much the perception of corruption influences the
 happiness score
@@ -301,11 +257,8 @@ g + geom_point() +
   geom_smooth(method="lm", se=F) 
 ```
 
-<h4>
+### Freedom to make life choices and score
 
-Freedom to make life choices and score
-
-</h4>
 
 Now let's see how much the perception of corruption influences the
 happiness score
@@ -315,17 +268,14 @@ g <- ggplot(d2019, aes(Freedom.to.make.life.choices, Score))
 g + geom_point() + 
   geom_smooth(method="lm", se=F) 
 ```
-
-<p>
-
 It doesn't surprise that the more freedom to make life choices, the more
 people are happy.
-</p>
 
-<h3>Grouping by Region</h3>
 
-<h4>Happiness Score by Region</h4>
-<p>Now let's see the average happiness score by Region (year 2015)</p>
+## Grouping by Region
+
+### Happiness Score by Region
+Now let's see the average happiness score by Region (year 2015)
 ```{r}
 r <- d2015 %>%
   select(Region, Happiness.Score) %>%
@@ -343,10 +293,10 @@ ggplot(r, aes(x = fct_reorder(Region, happinessMedian), y = happinessMean, fill 
   theme_light(base_size = 9) + coord_flip()
 
 ```
-<p>The result shows that the region where people feel more happy is "Australia and New Zealand"</p>
+The result shows that the region where people feel more happy is "Australia and New Zealand"
 
-<h4>GDP by Region</h4>
-<p>Now let's see the average GDP per capita score by Region (year 2015)</p>
+### GDP by Region
+Now let's see the average GDP per capita score by Region (year 2015)
 ```{r}
 r <- d2015 %>%
   select(Region, Economy..GDP.per.Capita.) %>%
@@ -363,10 +313,18 @@ ggplot(r, aes(x = fct_reorder(Region, gdpMedian), y = gdpMean, fill = gdpMean)) 
        title = "Average GDP score grouped by Region") +
   theme_light(base_size = 9) + coord_flip()
 ```
-<p>Despite Australia and New Zealand is at the top for happiness score it is not for the GDP score per capita. As we can see, the first for GDP is North America, followed by Western Europe.</p>
+Despite Australia and New Zealand is at the top for happiness score it is not for the GDP score per capita. As we can see, the first for GDP is North America, followed by Western Europe.
 
-<h3>Distribution of density</h3>
-<p>Let's have a look at the distribution of density of the happiness score</p>
+### Visualization of generosity and happiness score by region
+```{r}
+options(repr.plot.width=15, repr.plot.height = 6)
+ggplot(d2015, aes(x=Generosity, y=Happiness.Score, color=Region))+
+  geom_point() +
+  facet_wrap(~Region)
+```
+
+## Distribution of density
+Let's have a look at the distribution of density of the happiness score
 ```{r}
 ggplot(d2019,aes(Score))+
   geom_density()
@@ -374,9 +332,9 @@ median(d2019$Score)
 mean(d2019$Score)
 sd(d2019$Score)
 ```
-<p>As most complex phenomena, the distribution is a Gaussian curve. The unusual thing is that it is quite flat at the mean. Furthermore we can see that both the mean and the median are above the theoretical mean (that would be (10-0)/2=5). This is an optimistic data. </p>
-<h3Improvements across time></h3>
-<p>Now let's see if between 2015 an 2019 the mean and the median have shifted</p>
+As most complex phenomena, the distribution is a Gaussian curve. The unusual thing is that it is quite flat at the mean. Furthermore we can see that both the mean and the median are above the theoretical mean (that would be (10-0)/2=5). This is an optimistic data.
+## Improvements across time
+Now let's see if between 2015 an 2019 the mean and the median have shifted
 ```{r}
 mean(d2015$Happiness.Score)
 mean(d2016$Happiness.Score)
@@ -385,12 +343,30 @@ mean(d2018$Score)
 mean(d2019$Score)
 mean(d2019$Score)-mean(d2015$Happiness.Score)
 ```
-<h3>Conclusions</h3>
-<h4>When will we all reach 10</h4>
-<p>While the technical answer is never, we can see that from 2015 and and 2019 there is been an overall improvement of 0.03136198 in the level of happiness of people. This theoretically and utopically would mean that, assuming a costant rate of improvement in (10-mean(d2019$Score))/(mean(d2019$Score)-mean(d2015$Happiness.Score))*(2019-2015)=585 years years the mean would reach 10.0</p>
 
-<h4>How to reach that</h4>
-<p>We saw the clear correlation between happiness and the GDP per capita. One likely way to improve the happiness of most people would be to improve the average level of wealth. Of course, while doing so, there are other things to improve such as removing the corruption and enhancing freedom.</p>
+
+## Assuming some correlations
+The following is a possible correlation between the columns in the datasets
+```{r}
+library(dagitty)
+assumptions <- dagitty('dag {
+    Social.support -> GDP.per.capita
+    Generosity ->  GDP.per.capita
+    Healthy.life.expectancy -> GDP.per.capita
+    Freedom.to.make.life.choices -> GDP.per.capita
+    Perceptions.of.corruption -> GDP.per.capita
+    GDP.per.capita -> Score
+}')
+plot(assumptions)
+```
+
+
+## Conclusions
+### When will we all reach 10
+While the technical answer is never, we can see that from 2015 and and 2019 there is been an overall improvement of 0.03136198 in the level of happiness of people. This theoretically and utopically would mean that, assuming a costant rate of improvement in (10-mean(d2019$Score))/(mean(d2019$Score)-mean(d2015$Happiness.Score))*(2019-2015)=585 years years the mean would reach 10.0
+
+### How to reach that
+We saw the clear correlation between happiness and the GDP per capita. One likely way to improve the happiness of most people would be to improve the average level of wealth. Of course, while doing so, there are other things to improve such as removing the corruption and enhancing freedom.
 ```{r}
 (10-mean(d2019$Score))/(mean(d2019$Score)-mean(d2015$Happiness.Score))*(2019-2015)
 ```
