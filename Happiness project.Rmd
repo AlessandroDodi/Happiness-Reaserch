@@ -6,7 +6,7 @@ output: html_document
 
 ---
 
-```{r setup, include=F, warning=F}
+```{r setup, include=F, warning=F, message=F}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library('ggplot2')
@@ -18,9 +18,12 @@ library(lemon)
 - [What is happiness](#what-is-happiness)
 - [The aim of this project](#the-aim-of-this-project)
 - [About Dataset](#about-dataset)
-  * [Context](#context)
-  * [Content](#content)
-  * [Inspiration](#inspiration)
+  * [Happiness](#happiness)
+    + [Context](#context)
+    + [Content](#content)
+    + [Inspiration](#inspiration)
+  * [Suicide](#suicide)
+    + [General Analysis of Suicide Rates](#general-analysis-of-suicide-rates)
 - [Intresting correlations](#intresting-correlations)
   * [Overall](#overall)
   * [GDP and happiness score](#gdp-and-happiness-score)
@@ -34,13 +37,11 @@ library(lemon)
 - [Distribution of density](#distribution-of-density)
 - [Improvements across time](#improvements-across-time)
 - [Assuming some correlations](#assuming-some-correlations)
+- [Suicide analysis](#suicide-analysis)
 - [Conclusions](#conclusions)
   * [When will we all reach 10](#when-will-we-all-reach-10)
   * [How to reach that](#how-to-reach-that)
-
-
-
-
+  
 <br /> <img src="img.jpeg" width="80%"/> <br /><br />
 
 ## What is happiness
@@ -71,8 +72,9 @@ postulate some hypothesis
 
 <br /> <img src="map.PNG" width="80%"/> <br /><br />
 
+### Happiness
 
-### Context
+#### Context
 
 The World Happiness Report is a landmark survey of the state of global
 happiness. The first report was published in 2012, the second in 2013,
@@ -89,7 +91,7 @@ progress of nations. The reports review the state of happiness in the
 world today and show how the new science of happiness explains personal
 and national variations in happiness.
 
-### Content
+#### Content
 
 The happiness scores and rankings use data from the Gallup World Poll.
 The scores are based on answers to the main life evaluation question
@@ -108,7 +110,7 @@ of the six factors. They have no impact on the total score reported for
 each country, but they do explain why some countries rank higher than
 others.
 
-### Inspiration
+#### Inspiration
 
 What countries or regions rank the highest in overall happiness and each
 of the six factors contributing to happiness? How did country ranks or
@@ -157,13 +159,32 @@ country as stated in the previous answer.
 If you add all these factors up, you get the happiness score so it might
 be un-reliable to model them to predict Happiness Scores.
 
-```{r}
+### Suicide
 
+#### General Analysis of Suicide Rates
+Our aim is to make general analysis of suicide rates and we will explain these rates in detail.
+
+* Dataset Feature List:
++ country
++ year
++ sex
++ age
++ suicides_no
++ population
++ suicides/100k pop
++ country-year
++ HDI for year
++ gdp_for_year
++ gdp_per_capita
++ generation
+
+```{r}
 d2015 <- read.csv("datasets/2015.csv")
 d2016 <- read.csv("datasets/2016.csv")
 d2017 <- read.csv("datasets/2017.csv")
 d2018 <- read.csv("datasets/2018.csv")
 d2019 <- read.csv("datasets/2019.csv")
+suicide <- read.csv("datasets/suicide.csv")
 ```
 <h3>Displaying the data</h3>
 ```{r caption="Data frame is now printed using `kable`.",render=lemon_print}
@@ -172,6 +193,7 @@ head(d2016)
 head(d2017)
 head(d2018)
 head(d2019)
+head(suicide)
 ```
 
 **First 5 countries**
@@ -360,19 +382,46 @@ assumptions <- dagitty('dag {
 plot(assumptions)
 ```
 
+## Suicide analysis
+
+Now we are going to merge the dataset on the happiness score with data on suicide in order to see the correlations.
+
+```{r}
+#We get only the data for young people and for year 2015, which does not include all countries.
+suicide2015 <- suicide %>% select('country', 'year', 'age', 'suicides.100k.pop') %>% filter(year==2015 & age=='15-24 years')
+#The rows in the first dataset are duplicated, for this reason we apply the following operation.
+suicide2015 <- suicide2015[!duplicated(suicide2015$country),]
+
+merged <- inner_join(d2015, suicide2015, by = c('Country'='country'))
+```
+Now let's see a correlation with gplot
+```{r}
+g <- ggplot(merged, aes(suicides.100k.pop, Happiness.Score))
+g + geom_point() + 
+  geom_smooth(method="lm", se=F) 
+```
+
+The result is not clear and this is caused by the dataset on suicide which has some missing values. Nevertheless, we can see a surprising result. It seems to be that happiness score could be positively correlated with suicide. This phenomena is called "Fallacy of Happiness". A link in the biography has been provided for further information.
+
 
 ## Conclusions
 ### When will we all reach 10
-While the technical answer is never, we can see that from 2015 and and 2019 there is been an overall improvement of 0.03136198 in the level of happiness of people. This theoretically and utopically would mean that, assuming a costant rate of improvement in (10-mean(d2019$Score))/(mean(d2019$Score)-mean(d2015$Happiness.Score))*(2019-2015)=585 years years the mean would reach 10.0
-
-### How to reach that
-We saw the clear correlation between happiness and the GDP per capita. One likely way to improve the happiness of most people would be to improve the average level of wealth. Of course, while doing so, there are other things to improve such as removing the corruption and enhancing freedom.
+While the technical answer is never, we can see that from 2015 and and 2019 there is been an overall improvement of 0.03136198 in the level of happiness of people. This theoretically and utopically would mean that, assuming a costant rate of improvement in 585 years years the mean would reach 10.0
 ```{r}
 (10-mean(d2019$Score))/(mean(d2019$Score)-mean(d2015$Happiness.Score))*(2019-2015)
 ```
+### How to reach that
+We saw the clear correlation between happiness and the GDP per capita. One likely way to improve the happiness of most people would be to improve the average level of wealth. Of course, while doing so, there are other things to improve such as removing the corruption and enhancing freedom.
 
 
-**Bibliography**<br/> \* [what is
-happiness](https://www.verywellmind.com/what-is-happiness-4869755)<br/>
+
+**Bibliography**<br/> 
+\* 
+[what is happiness](https://www.verywellmind.com/what-is-happiness-4869755)<br/>
 \*
-[Dataset](https://www.kaggle.com/datasets/unsdsn/world-happiness)<br/>
+[Dataset on happiness](https://www.kaggle.com/datasets/unsdsn/world-happiness)<br/>
+\*
+[Dataset on suicide](https://www.kaggle.com/code/kralmachine/data-visualization-of-suicide-rates/notebook)<br/>
+\*
+[The Fallacy of Happiness](https://www.intechopen.com/chapters/77918)<br/>
+
